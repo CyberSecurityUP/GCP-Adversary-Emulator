@@ -1,6 +1,6 @@
 # GCP Adversary Emulator
 
-GCPAdversary is an adversary emulation tool designed for performing security tests on Google Cloud Platform (GCP) environments. It allows the simulation of various adversary tactics, techniques, and procedures (TTPs), providing a robust approach to testing your systems' resilience.
+GCP Adversary Emulator is an adversary emulation tool designed for performing security tests on Google Cloud Platform (GCP) environments. It allows the simulation of various adversary tactics, techniques, and procedures (TTPs), providing a robust approach to testing your systems' resilience.
 
 ## Features
 
@@ -74,6 +74,17 @@ To complement your security testing on GCP, consider using the following tools:
 - [k8senumeration](https://github.com/CyberSecurityUP/k8senumeration): Tool for enumerating Kubernetes clusters.
 - [gcp_enum](https://gitlab.com/gitlab-com/gl-security/threatmanagement/redteam/redteam-public/gcp_enum): Enumeration scripts for GCP.
 - [GCPBucketBrute](https://github.com/RhinoSecurityLabs/GCPBucketBrute): Brute force tool for GCP buckets.
+
+### Future Release
+
+In our next release, we plan to expand the capabilities of GCPAdversary to focus on Google Kubernetes Engine (GKE) and other Kubernetes environments within GCP. This update will include:
+
+- Enhanced TTPs specific to Kubernetes clusters.
+- Integration with common Kubernetes tools and frameworks.
+- Advanced techniques for testing Kubernetes security.
+- Automated scanning and exploitation of Kubernetes vulnerabilities.
+
+Stay tuned for more updates and features as we continue to enhance GCPA dversary Emulator to meet the evolving needs of cloud security testing.
 
 ## Contributions
 
