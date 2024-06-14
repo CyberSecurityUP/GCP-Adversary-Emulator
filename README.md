@@ -90,6 +90,49 @@ Stay tuned for more updates and features as we continue to enhance GCPA dversary
 
 Contributions are welcome! Feel free to open issues or submit pull requests.
 
+Sure! Here's an updated README with a section on how to add TTPs to the JSON and `execute_technique.py`, along with step-by-step instructions:
+
+---
+
+### Adding TTPs to JSON
+
+1. Open the `ttps/ttps.json` file.
+2. Locate the appropriate section for the tactic you want to add a technique to.
+3. Add a new JSON object with the `id`, `details`, and `command` fields. For example:
+
+```json
+{
+    "GCP": {
+        "Reconnaissance": [
+            {
+                "id": "T1590-1",
+                "details": "Gathering GCP resources",
+                "command": "gcloud compute instances list"
+            },
+            {
+                "id": "T1590-2",
+                "details": "Analyzing gcloud configuration",
+                "command": "gcloud info --quiet; gcloud config list --quiet; gcloud auth list --quiet"
+            }
+            // Add your new TTP here
+        ]
+        // Other tactics...
+    }
+}
+```
+
+### Updating `execute_technique.py`
+
+1. Open the `modules/execute_technique.py` file.
+2. Ensure that the command placeholders in the new TTP are supported by the input prompts. If necessary, add new input prompts for any placeholders not currently handled.
+3. For example, if your new command includes a placeholder `<new_placeholder>`, add:
+
+```python
+if "<new_placeholder>" in command:
+    new_value = input("Enter the new value for <new_placeholder>: ")
+    command = command.replace("<new_placeholder>", new_value)
+```
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
