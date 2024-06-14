@@ -90,8 +90,6 @@ Stay tuned for more updates and features as we continue to enhance GCPA dversary
 
 Contributions are welcome! Feel free to open issues or submit pull requests.
 
-Sure! Here's an updated README with a section on how to add TTPs to the JSON and `execute_technique.py`, along with step-by-step instructions:
-
 ---
 
 ### Adding TTPs to JSON
