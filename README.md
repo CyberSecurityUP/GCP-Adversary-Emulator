@@ -24,8 +24,8 @@ GCP Adversary Emulator is an adversary emulation tool designed for performing se
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/GCPAdversary.git
-cd GCPAdversary
+git clone https://github.com/CyberSecurityUP/GCP-Adversary-Emulator
+cd GCP-Adversary-Emulator
 ```
 
 2. Install dependencies:
